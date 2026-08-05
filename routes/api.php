@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\LoanController;
 use App\Http\Controllers\Api\V1\LoanProductController;
 use App\Http\Controllers\Api\V1\PaymentIntentController;
 use App\Http\Controllers\Api\V1\ReconciliationController;
+use App\Http\Controllers\Api\V1\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -38,5 +39,8 @@ Route::prefix('v1')->group(function (): void {
         Route::get('reconciliation/candidate-intents', [ReconciliationController::class, 'candidateIntents']);
         Route::post('reconciliation/matches', [ReconciliationController::class, 'match']);
         Route::post('reconciliation/rejects', [ReconciliationController::class, 'reject']);
+
+        Route::get('reports/overview', [ReportController::class, 'overview']);
+        Route::get('reports/aging', [ReportController::class, 'aging']);
     });
 });

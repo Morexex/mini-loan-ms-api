@@ -62,6 +62,13 @@ Laravel also exposes [GET /up](http://127.0.0.1:8000/up).
 | POST | `/api/v1/reconciliation/matches` | `{ webhook_log_id, payment_intent_uuid, reason }` → same AllocationService |
 | POST | `/api/v1/reconciliation/rejects` | `{ webhook_log_id, reason }` |
 
+### Reports (Sanctum)
+
+| Method | Path | Notes |
+|--------|------|-------|
+| GET | `/api/v1/reports/overview` | Active book, payments today/MTD, unmatched, wallet liability |
+| GET | `/api/v1/reports/aging` | Installment aging buckets (current / 1–30 / 31–60 / 61+) |
+
 Ops UI: companion `mini-loan-ms-web` (`npm run dev` on `:5173`).
 
 Evidence posts a Payment and allocates installments (Milestone 12). Manual match may target **expired** intents (late callback recovery).
@@ -109,7 +116,8 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 11 — Callback handling (STK/SMS webhooks → PaymentEvidence → ingest reconciliation)
 - Milestone 12 — Reconciliation engine (allocate installments + wallet overpay + intent TTL expiry)
 - Milestone 13 — Manual reconciliation API + Vue ops workspace
-- Next: Milestone 14 — Reporting
+- Milestone 14 — Portfolio reports (overview + installment aging)
+- Next: Milestone 15 — Testing polish
 
 ## Git
 
