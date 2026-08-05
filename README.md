@@ -4,49 +4,65 @@ Laravel backend for the **Mini Loan Management System** (Demulla technical asses
 
 This repository is the **financial transaction processing engine**: customers, products, loans, installments, Daraja B2C/STK, Payment Intents, reconciliation, wallets, webhooks, and primary documentation.
 
-The Vue app is a separate ops console. It must not own allocation or reconciliation rules.
+Companion UI: [`../mini-loan-ms-web`](../mini-loan-ms-web) · Remote: https://github.com/Morexex/mini-loan-ms-api
 
-## Companion repository
+## Requirements
 
-| Repo | Path | Role |
-|------|------|------|
-| Web (ops UI) | [`../mini-loan-ms-web`](../mini-loan-ms-web) | Presentation only |
-| API (this repo) | `.` | Domain, money, integrations, docs |
+- PHP 8.4+
+- Composer 2
+- MySQL 8 (assessment/demo)
+- Redis optional (queues/cache); database queue driver works for early bootstrap
 
-Remote: https://github.com/Morexex/mini-loan-ms-api
+## Quick start
+
+```bash
+cp .env.example .env
+php artisan key:generate
+
+# Create MySQL database: mini_loan_ms
+# Then set DB_* in .env
+
+composer install
+php artisan migrate:fresh
+php artisan serve
+```
+
+Health check: [GET /api/v1/health](http://127.0.0.1:8000/api/v1/health)
+
+Laravel also exposes [GET /up](http://127.0.0.1:8000/up).
+
+### SQLite smoke test (optional)
+
+```bash
+# In .env: DB_CONNECTION=sqlite and ensure database/database.sqlite exists
+touch database/database.sqlite
+php artisan migrate:fresh
+```
 
 ## Documentation
 
 | Doc | Description |
 |-----|-------------|
-| [`docs/01-project-understanding.md`](./docs/01-project-understanding.md) | Milestone 0 discovery: problem, FRs/NFRs, risks, failure modes, reconciliation ranking, decisions |
-| [`docs/02-system-design.md`](./docs/02-system-design.md) | Milestone 1 architecture: modular domain, sequences, API sketch |
-| [`docs/03-erd.md`](./docs/03-erd.md) | Milestone 2 ERD: tables, money types, intents, allocations, wallet, integrity rules |
-| [`docs/adr/`](./docs/adr/) | Architecture Decision Records (interest, intents, wallet, SMS) |
+| [`docs/01-project-understanding.md`](./docs/01-project-understanding.md) | Milestone 0 discovery |
+| [`docs/02-system-design.md`](./docs/02-system-design.md) | Milestone 1 architecture |
+| [`docs/03-erd.md`](./docs/03-erd.md) | Milestone 2 ERD (migrations implement this) |
+| [`docs/adr/`](./docs/adr/) | ADRs |
 
-**Read first:**
+## Application layout (Approach B)
 
-1. [Why reconciliation is hardest](./docs/01-project-understanding.md#9-why-reconciliation-is-the-hardest-part)
-2. [System design](./docs/02-system-design.md)
-3. [ERD](./docs/03-erd.md)
-4. [ADR 0002 — Payment Intent identity](./docs/adr/0002-payment-intent-identity.md)
-
-## Stack (planned)
-
-- Laravel 12 · PHP 8.4 · MySQL · Redis / queues
-- Daraja sandbox: B2C disbursement + STK Push
-- SMS forwarder webhook (secondary evidence → same reconciliation engine)
-
-## Framing
-
-> Modular monolith with Payment-Intent-driven reconciliation. Safaricom identifiers are metadata only — never primary join keys.
+```text
+app/Domain/           # Customers, Loans, Payments, Reconciliation, ...
+app/Infrastructure/   # Daraja, SmsForwarder, Persistence
+app/Enums/            # Loan/payment/wallet status enums
+app/Http/Controllers/Api/V1/
+config/daraja.php     # Sandbox + SMS webhook secret
+```
 
 ## Status
 
-- Milestone 0 — complete (discovery)
-- Milestone 1 — complete (architecture)
-- Milestone 2 — complete (ERD)
-- Next: Milestone 3 — Laravel foundation + migrations
+- Milestones 0–2 — docs complete
+- Milestone 3 — Laravel foundation + ERD migrations + Sanctum package
+- Next: Milestone 4 — Authentication flows
 
 ## Git
 
