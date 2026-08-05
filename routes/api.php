@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\LoanController;
 use App\Http\Controllers\Api\V1\LoanProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +20,10 @@ Route::prefix('v1')->group(function (): void {
 
         Route::apiResource('customers', CustomerController::class)->except(['destroy']);
         Route::apiResource('loan-products', LoanProductController::class)->except(['destroy']);
+
+        Route::get('loans', [LoanController::class, 'index']);
+        Route::post('loans', [LoanController::class, 'store']);
+        Route::get('loans/{loan}', [LoanController::class, 'show']);
+        Route::post('loans/{loan}/approve', [LoanController::class, 'approve']);
     });
 });
