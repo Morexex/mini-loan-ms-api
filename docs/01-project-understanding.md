@@ -209,3 +209,65 @@ Requirements use stable IDs so later milestones and tests can trace back here.
 | FR-U1 | Vue 3 + TypeScript ops console consumes the API; no client-side authority over reconciliation math. |
 | FR-U2 | Surfaces include customers, products, loans, installment progress, payment intent/payment history, manual recon, and (time permitting) light analytics. |
 | FR-U3 | UX bar: executive, modern, responsive, accessible; motion and polish after APIs for each module are stable. |
+
+---
+
+## 5. Non-Functional Requirements
+
+| ID | Category | Requirement |
+|----|----------|-------------|
+| NFR-I1 | Integrity | Money fields use fixed-precision decimals (never floating point). Allocations run inside database transactions. |
+| NFR-I2 | Integrity | Concurrent payment application uses row-level locking (or equivalent) to prevent double allocation. |
+| NFR-I3 | Idempotency | Replaying the same callback, SMS evidence, or operator action must not credit installments twice. |
+| NFR-A1 | Auditability | Domain transitions and external webhook payloads are reconstructable from stored records without relying on Safaricom retention. |
+| NFR-A2 | Auditability | Manual reconciliation actions always store actor, reason, before/after linkage. |
+| NFR-S1 | Security | Input validation at the API boundary (Form Requests); mass-assignment protection; parameterized queries (Eloquent/Query Builder). |
+| NFR-S2 | Security | Sanctum-authenticated ops routes; webhook endpoints authenticated (shared secret / signature) and rate-limited. |
+| NFR-S3 | Security | Secrets (Daraja keys, webhook secrets) live in environment config — never committed. |
+| NFR-S4 | Security | SPA XSS/CSRF posture appropriate for Sanctum cookie or token mode (locked at Milestone 4 design). |
+| NFR-O1 | Observability | Structured logging for Daraja calls, reconciliation decisions, and failed matches. |
+| NFR-O2 | Observability | Failed/pending Payment Intents are visible to ops (lists + manual queue). |
+| NFR-P1 | Performance | Synchronous HTTP handlers stay thin; Daraja outbound calls and heavy reconciliation run via queues where practical. |
+| NFR-P2 | Performance | Ops list endpoints support pagination; avoid unbounded table scans in default queries. |
+| NFR-T1 | Testability | Reconciliation rules are unit/feature testable without live Daraja (HTTP client faked at the boundary; sandbox used for integration demos). |
+| NFR-T2 | Testability | `php artisan migrate:fresh` succeeds from a clean clone with documented env. |
+| NFR-M1 | Maintainability | Thin controllers; business rules in services/actions; stable FR/ADR docs updated per milestone. |
+| NFR-M2 | Maintainability | Two-repo boundary: web never embeds allocation/reconciliation formulas. |
+| NFR-U1 | Usability | Ops UI is responsive, keyboard-accessible for primary flows, and communicates async states (pending STK, failed disbursement) clearly. |
+| NFR-R1 | Reliability | Scheduler handles intent expiry/escalation; missing callbacks do not leave money in an uninspectable state. |
+
+---
+
+## 6. Constraints
+
+| ID | Constraint |
+|----|------------|
+| C1 | Stack is fixed: Laravel 12 / PHP 8.4 / MySQL / Redis queues (API); Vue 3 / TypeScript / Pinia / Vue Router / Vuetify / Tailwind (web). |
+| C2 | Daraja **sandbox** B2C and STK must be real integrations — not mocked as the only path — for the assessment demo. |
+| C3 | Safaricom identifiers (`CheckoutRequestID`, `MerchantRequestID`, `ReceiptNumber`, etc.) are **metadata only**, never primary join keys to loans/payments. |
+| C4 | Repositories live at `/Users/dolcepay/Code/mini-loan-ms-api` and `/Users/dolcepay/Code/mini-loan-ms-web`. |
+| C5 | Interest model for v1 is **flat**. |
+| C6 | Overpayment disposition is **customer credit wallet** (not silent principal write-down without wallet events). |
+| C7 | SMS forwarder is in scope as a **secondary** evidence webhook into the same reconciliation engine. |
+| C8 | Auth for ops is **Laravel Sanctum** (SPA). |
+| C9 | Loan status transitions must not skip states for convenience. |
+| C10 | Constitution workflow: explain → approaches → design → small tasks → one task → teach → wait — unless Moses explicitly continues/approves. |
+| C11 | Routine Git commits land at **milestone boundaries** (explicit commit/push requests still honored). |
+| C12 | Submission expectation: clean migrations from fresh clone; Git history readable; documentation defendable in interview. |
+
+---
+
+## 7. Assumptions
+
+| ID | Assumption | If wrong |
+|----|------------|----------|
+| A1 | Daraja sandbox credentials and shortcode/passkey material will be available in `.env` for local/demo runs. | Disbursement/STK demos blocked until credentials exist; architecture still proceeds with clear env contracts. |
+| A2 | Callback URLs can be reached by Safaricom (tunnel, hosted URL, or equivalent) during demo. | Use logged outbound + manual/SMS evidence paths; document tunnel setup in README. |
+| A3 | Single ops tenant / single organization — no multi-lender partitioning in v1. | Schema stays simple; tenancy would be a later ADR. |
+| A4 | Currency is **KES**; amounts are two-decimal money unless an ADR changes storage to minor units. | Affects column precision and UI formatting only. |
+| A5 | Customer phone is a reliable enough M-Pesa MSISDN after normalization for sandbox testing. | Strengthen validation; support override MSISDN field later if needed. |
+| A6 | The SMS forwarder app can POST a documented JSON payload (raw SMS text + metadata) to our webhook with a shared secret. | Endpoint still scaffolds; parser adapts once a sample payload is provided. |
+| A7 | One primary ops user (or small set of equivalent admins) is enough for authz in v1. | Roles/permissions can deepen without redesigning the engine. |
+| A8 | “Oldest due first” is an acceptable default multi-loan allocation rule until Milestone 12 design confirms or replaces it. | Swap rule in one service method + tests. |
+| A9 | Flat interest schedule generation (equal installments over term) is acceptable for the assessment’s auditability goals. | Reducing-balance remains a documented non-choice, not a silent pivot. |
+| A10 | Redis is available locally (Docker or native) for queues; sync queue driver is acceptable only for early bootstrap, not the final demo posture. | Document Docker Compose when foundation lands. |
