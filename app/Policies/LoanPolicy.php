@@ -31,4 +31,9 @@ class LoanPolicy
     {
         return true;
     }
+
+    public function collect(User $user, Loan $loan): bool
+    {
+        return true;
+    }
 }

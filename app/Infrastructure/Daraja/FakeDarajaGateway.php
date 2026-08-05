@@ -49,12 +49,35 @@ class FakeDarajaGateway implements DarajaGateway
 
     public function stkPush(array $payload): array
     {
+        if (! self::$shouldSucceed) {
+            return [
+                'request' => $payload,
+                'response' => [
+                    'ResponseCode' => '1',
+                    'ResponseDescription' => self::$failureMessage,
+                ],
+                'merchant_request_id' => null,
+                'checkout_request_id' => null,
+                'response_code' => '1',
+                'response_description' => self::$failureMessage,
+                'successful' => false,
+            ];
+        }
+
         return [
             'request' => $payload,
-            'response' => ['ResponseCode' => '0'],
-            'successful' => true,
-            'checkout_request_id' => 'fake-checkout-id',
+            'response' => [
+                'MerchantRequestID' => 'fake-merchant-id',
+                'CheckoutRequestID' => 'fake-checkout-id',
+                'ResponseCode' => '0',
+                'ResponseDescription' => 'Success. Request accepted for processing',
+                'CustomerMessage' => 'Success. Request accepted for processing',
+            ],
             'merchant_request_id' => 'fake-merchant-id',
+            'checkout_request_id' => 'fake-checkout-id',
+            'response_code' => '0',
+            'response_description' => 'Success. Request accepted for processing',
+            'successful' => true,
         ];
     }
 }

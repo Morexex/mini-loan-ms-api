@@ -57,4 +57,9 @@ class Loan extends Model
     {
         return $this->hasMany(Disbursement::class)->latest('id');
     }
+
+    public function paymentIntents(): HasMany
+    {
+        return $this->hasMany(PaymentIntent::class)->latest('id');
+    }
 }

@@ -52,7 +52,51 @@ class SandboxDarajaGateway implements DarajaGateway
 
     public function stkPush(array $payload): array
     {
-        throw new RuntimeException('STK Push is implemented in Milestone 10.');
+        $token = $this->accessToken();
+        $url = rtrim((string) config('daraja.base_url'), '/').'/mpesa/stkpush/v1/processrequest';
+
+        $shortcode = (string) config('daraja.shortcode');
+        $passkey = (string) config('daraja.passkey');
+        $timestamp = now()->format('YmdHis');
+        $password = base64_encode($shortcode.$passkey.$timestamp);
+
+        $body = [
+            'BusinessShortCode' => $shortcode,
+            'Password' => $password,
+            'Timestamp' => $timestamp,
+            'TransactionType' => 'CustomerPayBillOnline',
+            'Amount' => $payload['amount'],
+            'PartyA' => $payload['phone'],
+            'PartyB' => $shortcode,
+            'PhoneNumber' => $payload['phone'],
+            'CallBackURL' => config('daraja.stk_callback_url'),
+            'AccountReference' => $payload['account_reference'] ?? 'LOAN',
+            'TransactionDesc' => $payload['transaction_desc'] ?? 'Loan repayment',
+        ];
+
+        try {
+            $response = Http::withToken($token)
+                ->acceptJson()
+                ->post($url, $body)
+                ->throw()
+                ->json();
+        } catch (RequestException $exception) {
+            throw new RuntimeException(
+                'Daraja STK Push request failed: '.$exception->getMessage(),
+                previous: $exception,
+            );
+        }
+
+        return [
+            'request' => $body,
+            'response' => $response,
+            'merchant_request_id' => $response['MerchantRequestID'] ?? null,
+            'checkout_request_id' => $response['CheckoutRequestID'] ?? null,
+            'response_code' => $response['ResponseCode'] ?? null,
+            'response_description' => $response['ResponseDescription'] ?? null,
+            'customer_message' => $response['CustomerMessage'] ?? null,
+            'successful' => ($response['ResponseCode'] ?? null) === '0',
+        ];
     }
 
     private function accessToken(): string

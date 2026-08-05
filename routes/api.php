@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\LoanController;
 use App\Http\Controllers\Api\V1\LoanProductController;
+use App\Http\Controllers\Api\V1\PaymentIntentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -27,5 +28,9 @@ Route::prefix('v1')->group(function (): void {
         Route::get('loans/{loan}/installments', [LoanController::class, 'installments']);
         Route::post('loans/{loan}/approve', [LoanController::class, 'approve']);
         Route::post('loans/{loan}/disburse', [LoanController::class, 'disburse']);
+
+        Route::get('loans/{loan}/payment-intents', [PaymentIntentController::class, 'index']);
+        Route::post('loans/{loan}/payment-intents', [PaymentIntentController::class, 'store']);
+        Route::get('payment-intents/{paymentIntent:uuid}', [PaymentIntentController::class, 'show']);
     });
 });
