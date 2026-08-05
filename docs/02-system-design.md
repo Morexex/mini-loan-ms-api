@@ -323,7 +323,7 @@ FM1–FM14 in `01-project-understanding.md` §10 are binding. Unmatched evidence
 | [0001](./adr/0001-flat-interest.md) | Flat interest for v1 | Accepted |
 | [0002](./adr/0002-payment-intent-identity.md) | Payment Intent as primary identity | Accepted |
 | [0003](./adr/0003-credit-wallet-overpayment.md) | Credit wallet for overpayment | Accepted |
-| [0004](./adr/0004-sms-evidence-fallback.md) | SMS forwarder as secondary evidence | Accepted |
+| [0005](./adr/0005-sanctum-cookie-spa.md) | Sanctum cookie SPA auth | Accepted |
 
 ---
 

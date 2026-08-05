@@ -497,7 +497,7 @@ Blocking only if unanswered when that milestone’s design starts.
 | ID | Question | Needed by | Owner | Status |
 |----|----------|-----------|-------|--------|
 | Q1 | Exact JSON payload from the SMS forwarder app (sample message + fields) | M11/M12 SMS parser design | Moses | **Open** |
-| Q2 | Sanctum mode: cookie-based SPA vs token header — final choice | M4 design | Lead + assistant | **Open** (recommend cookie SPA behind same-site/CORS setup) |
+| Q2 | Sanctum mode: cookie-based SPA vs token header — final choice | M4 design | Lead + assistant | **Resolved — cookie SPA (ADR 0005)** |
 | Q3 | Payment Intent TTL duration (e.g. 15 vs 30 minutes) | M10/M12 | Lead | **Open** |
 | Q4 | Amount tolerance: exact match only vs allow minor variance | M12 | Lead | **Open** (recommend exact for sandbox) |
 | Q5 | Wallet drawdown: automatic on next STK vs ops-triggered apply | M12 | Lead | **Open** |

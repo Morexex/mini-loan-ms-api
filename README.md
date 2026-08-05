@@ -23,9 +23,23 @@ php artisan key:generate
 # Then set DB_* in .env
 
 composer install
-php artisan migrate:fresh
+php artisan migrate:fresh --seed
 php artisan serve
 ```
+
+Default ops user (from seeder):
+
+- Email: `ops@miniloan.test`
+- Password: `password`
+
+### Auth (Sanctum cookie SPA)
+
+1. `GET /sanctum/csrf-cookie` (credentials included)
+2. `POST /api/v1/login` `{ "email", "password" }`
+3. `GET /api/v1/me` (authenticated)
+4. `POST /api/v1/logout`
+
+Configure `FRONTEND_URL` and `SANCTUM_STATEFUL_DOMAINS` for the Vite origin. See [ADR 0005](./docs/adr/0005-sanctum-cookie-spa.md).
 
 Health check: [GET /api/v1/health](http://127.0.0.1:8000/api/v1/health)
 
@@ -46,7 +60,7 @@ php artisan migrate:fresh
 | [`docs/01-project-understanding.md`](./docs/01-project-understanding.md) | Milestone 0 discovery |
 | [`docs/02-system-design.md`](./docs/02-system-design.md) | Milestone 1 architecture |
 | [`docs/03-erd.md`](./docs/03-erd.md) | Milestone 2 ERD (migrations implement this) |
-| [`docs/adr/`](./docs/adr/) | ADRs |
+| [`docs/adr/`](./docs/adr/) | ADRs (incl. Sanctum cookie SPA) |
 
 ## Application layout (Approach B)
 
@@ -61,8 +75,9 @@ config/daraja.php     # Sandbox + SMS webhook secret
 ## Status
 
 - Milestones 0–2 — docs complete
-- Milestone 3 — Laravel foundation + ERD migrations + Sanctum package
-- Next: Milestone 4 — Authentication flows
+- Milestone 3 — Laravel foundation + ERD migrations
+- Milestone 4 — Sanctum cookie SPA auth + ops seeder
+- Next: Milestone 5 — Customer module
 
 ## Git
 
