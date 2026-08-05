@@ -53,7 +53,7 @@ Laravel also exposes [GET /up](http://127.0.0.1:8000/up).
 | POST | `/webhooks/daraja/b2c` | B2C result sink (raw log) |
 | POST | `/webhooks/sms-forwarder` | Header `X-Sms-Forwarder-Secret` = `SMS_FORWARDER_WEBHOOK_SECRET` |
 
-Milestone 11 links evidence to an open Payment Intent (`matched`) but **does not allocate** installments yet (Milestone 12).
+Milestone 11 links evidence to an open Payment Intent and **Milestone 12 allocates**: posts `payments`, applies installments oldest-due-first, credits wallet on overpay, completes the intent.
 
 ### SQLite smoke test (optional)
 
@@ -71,7 +71,8 @@ php artisan migrate:fresh
 | [`docs/02-system-design.md`](./docs/02-system-design.md) | Milestone 1 architecture |
 | [`docs/03-erd.md`](./docs/03-erd.md) | Milestone 2 ERD (migrations implement this) |
 | [`docs/04-installment-engine.md`](./docs/04-installment-engine.md) | Milestone 8 flat schedule formula + immutability |
-| [`docs/adr/`](./docs/adr/) | ADRs (incl. Sanctum cookie SPA) |
+| [`docs/05-reconciliation-engine.md`](./docs/05-reconciliation-engine.md) | Milestone 12 allocation + wallet overpay |
+| [`docs/adr/`](./docs/adr/) | ADRs (incl. Sanctum cookie SPA, allocation rules) |
 
 ## Application layout (Approach B)
 
@@ -95,7 +96,8 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 9 — Disbursement via Daraja B2C (auditable + fakeable gateway)
 - Milestone 10 — Payment Intents + STK Push (intent-first)
 - Milestone 11 — Callback handling (STK/SMS webhooks → PaymentEvidence → ingest reconciliation)
-- Next: Milestone 12 — Reconciliation engine (allocation)
+- Milestone 12 — Reconciliation engine (allocate installments + wallet overpay + intent TTL expiry)
+- Next: Milestone 13 — Manual reconciliation dashboard
 
 ## Git
 

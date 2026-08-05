@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\WalletTransactionReason;
+use App\Enums\WalletTransactionType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -24,6 +26,8 @@ class WalletTransaction extends Model
         return [
             'amount' => 'decimal:2',
             'balance_after' => 'decimal:2',
+            'type' => WalletTransactionType::class,
+            'reason' => WalletTransactionReason::class,
         ];
     }
 

@@ -4,14 +4,18 @@ namespace Tests\Feature\Webhooks;
 
 use App\Domain\Disbursements\Actions\DisburseLoanAction;
 use App\Domain\Loans\Actions\ApproveLoanAction;
+use App\Enums\InstallmentStatus;
 use App\Enums\LoanStatus;
 use App\Enums\PaymentIntentStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\WebhookProcessingStatus;
 use App\Models\Customer;
 use App\Models\Loan;
 use App\Models\LoanProduct;
+use App\Models\Payment;
 use App\Models\PaymentIntent;
 use App\Models\User;
+use App\Models\WalletAccount;
 use App\Models\WebhookLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,7 +24,7 @@ class DarajaStkWebhookTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_stk_success_callback_matches_open_payment_intent(): void
+    public function test_stk_success_callback_allocates_payment_intent(): void
     {
         $loan = $this->activeLoan();
         $intent = $this->openIntent($loan, '500.00', 'fake-checkout-id');
@@ -34,13 +38,24 @@ class DarajaStkWebhookTest extends TestCase
             ->assertJsonPath('ResultCode', 0);
 
         $intent->refresh();
-        $this->assertSame(PaymentIntentStatus::Matched, $intent->status);
-        $this->assertSame('QWERTY1234', $intent->metadata['pending_evidence']['receipt_number'] ?? null);
+        $this->assertSame(PaymentIntentStatus::Completed, $intent->status);
+
+        $this->assertDatabaseHas('payments', [
+            'payment_intent_id' => $intent->id,
+            'status' => PaymentStatus::Posted->value,
+            'receipt_number' => 'QWERTY1234',
+            'amount' => '500.00',
+        ]);
 
         $this->assertDatabaseHas('webhook_logs', [
             'provider' => 'daraja_stk',
             'processing_status' => WebhookProcessingStatus::Processed->value,
         ]);
+
+        $this->assertTrue(
+            $loan->installments()->where('status', InstallmentStatus::Paid)->exists()
+            || $loan->installments()->where('status', InstallmentStatus::PartiallyPaid)->exists()
+        );
     }
 
     public function test_duplicate_stk_callback_is_idempotent(): void
@@ -58,9 +73,10 @@ class DarajaStkWebhookTest extends TestCase
         $this->postJson('/webhooks/daraja/stk', $payload)->assertOk();
         $this->postJson('/webhooks/daraja/stk', $payload)->assertOk();
 
+        $this->assertSame(1, Payment::query()->count());
         $this->assertSame(1, WebhookLog::query()->where('processing_status', WebhookProcessingStatus::Processed)->count());
         $this->assertSame(1, WebhookLog::query()->where('processing_status', WebhookProcessingStatus::IgnoredDuplicate)->count());
-        $this->assertSame(1, PaymentIntent::query()->where('status', PaymentIntentStatus::Matched)->count());
+        $this->assertSame(1, PaymentIntent::query()->where('status', PaymentIntentStatus::Completed)->count());
     }
 
     public function test_stk_callback_without_matching_intent_is_unmatched(): void
@@ -76,9 +92,10 @@ class DarajaStkWebhookTest extends TestCase
             'provider' => 'daraja_stk',
             'processing_status' => WebhookProcessingStatus::Unmatched->value,
         ]);
+        $this->assertSame(0, Payment::query()->count());
     }
 
-    public function test_failed_stk_result_is_logged_without_match(): void
+    public function test_failed_stk_result_is_logged_without_allocation(): void
     {
         $loan = $this->activeLoan();
         $intent = $this->openIntent($loan, '500.00', 'fake-checkout-id');
@@ -96,6 +113,7 @@ class DarajaStkWebhookTest extends TestCase
 
         $intent->refresh();
         $this->assertSame(PaymentIntentStatus::AwaitingCallback, $intent->status);
+        $this->assertSame(0, Payment::query()->count());
         $this->assertDatabaseHas('webhook_logs', [
             'processing_status' => WebhookProcessingStatus::Processed->value,
         ]);
@@ -151,6 +169,11 @@ class DarajaStkWebhookTest extends TestCase
     {
         User::factory()->create();
         $customer = Customer::factory()->create(['phone' => '254700111222']);
+        WalletAccount::query()->create([
+            'customer_id' => $customer->id,
+            'balance' => 0,
+            'currency' => 'KES',
+        ]);
         $product = LoanProduct::factory()->create(['term_length' => 2]);
         $loan = Loan::factory()->create([
             'customer_id' => $customer->id,

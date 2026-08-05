@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Domain\Reconciliation\IngestOnlyReconciliationService;
+use App\Domain\Reconciliation\AllocatingReconciliationService;
 use App\Domain\Reconciliation\ReconciliationService;
 use App\Infrastructure\Daraja\DarajaGateway;
 use App\Infrastructure\Daraja\FakeDarajaGateway;
@@ -24,8 +24,7 @@ class AppServiceProvider extends ServiceProvider
             return new SandboxDarajaGateway;
         });
 
-        // Milestone 11: ingest-only. Milestone 12 replaces this binding with full allocation.
-        $this->app->bind(ReconciliationService::class, IngestOnlyReconciliationService::class);
+        $this->app->bind(ReconciliationService::class, AllocatingReconciliationService::class);
     }
 
     public function boot(): void

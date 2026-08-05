@@ -324,6 +324,7 @@ FM1–FM14 in `01-project-understanding.md` §10 are binding. Unmatched evidence
 | [0002](./adr/0002-payment-intent-identity.md) | Payment Intent as primary identity | Accepted |
 | [0003](./adr/0003-credit-wallet-overpayment.md) | Credit wallet for overpayment | Accepted |
 | [0005](./adr/0005-sanctum-cookie-spa.md) | Sanctum cookie SPA auth | Accepted |
+| [0006](./adr/0006-reconciliation-allocation-rules.md) | Reconciliation allocation rules (Q4–Q6) | Accepted |
 
 ---
 

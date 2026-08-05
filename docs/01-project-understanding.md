@@ -499,8 +499,8 @@ Blocking only if unanswered when that milestone’s design starts.
 | Q1 | Exact JSON payload from the SMS forwarder app (sample message + fields) | M11/M12 SMS parser design | Moses | **Open** |
 | Q2 | Sanctum mode: cookie-based SPA vs token header — final choice | M4 design | Lead + assistant | **Resolved — cookie SPA (ADR 0005)** |
 | Q3 | Payment Intent TTL duration (e.g. 15 vs 30 minutes) | M10/M12 | Lead | **Resolved — default 15 minutes** (`PAYMENT_INTENT_TTL_MINUTES`) |
-| Q4 | Amount tolerance: exact match only vs allow minor variance | M12 | Lead | **Open** (recommend exact for sandbox) |
-| Q5 | Wallet drawdown: automatic on next STK vs ops-triggered apply | M12 | Lead | **Open** |
-| Q6 | Confirm **oldest due first** for multi-loan ambiguity | M12 | Lead | **Open** (default D9) |
+| Q4 | Amount tolerance: exact match only vs allow minor variance | M12 | Lead | **Resolved — exact for phone+amount match; checkout-linked posts evidence amount (ADR 0006)** |
+| Q5 | Wallet drawdown: automatic on next STK vs ops-triggered apply | M12 | Lead | **Resolved — ops-triggered only for now (ADR 0006); overpay still credits wallet** |
+| Q6 | Confirm **oldest due first** for multi-loan ambiguity | M12 | Lead | **Resolved — loan-scoped intent; oldest due installment first (ADR 0006)** |
 | Q7 | Public demo host vs local + tunnel only | M16 | Moses | **Open** |
 | Q8 | GitHub repo visibility (private vs public for submission) | Submission | Moses | **Open** (currently private remotes exist) |

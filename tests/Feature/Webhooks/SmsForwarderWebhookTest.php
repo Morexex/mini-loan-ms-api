@@ -10,8 +10,10 @@ use App\Enums\WebhookProcessingStatus;
 use App\Models\Customer;
 use App\Models\Loan;
 use App\Models\LoanProduct;
+use App\Models\Payment;
 use App\Models\PaymentIntent;
 use App\Models\User;
+use App\Models\WalletAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,7 +32,7 @@ class SmsForwarderWebhookTest extends TestCase
         ])->assertUnauthorized();
     }
 
-    public function test_sms_forwarder_matches_open_intent_by_phone_and_amount(): void
+    public function test_sms_forwarder_allocates_open_intent_by_phone_and_amount(): void
     {
         config(['daraja.sms_forwarder_secret' => 'test-secret']);
 
@@ -58,7 +60,8 @@ class SmsForwarderWebhookTest extends TestCase
         ])->assertAccepted();
 
         $intent->refresh();
-        $this->assertSame(PaymentIntentStatus::Matched, $intent->status);
+        $this->assertSame(PaymentIntentStatus::Completed, $intent->status);
+        $this->assertSame(1, Payment::query()->count());
         $this->assertDatabaseHas('webhook_logs', [
             'provider' => 'sms_forwarder',
             'processing_status' => WebhookProcessingStatus::Processed->value,
@@ -69,6 +72,11 @@ class SmsForwarderWebhookTest extends TestCase
     {
         User::factory()->create();
         $customer = Customer::factory()->create(['phone' => '254700111222']);
+        WalletAccount::query()->create([
+            'customer_id' => $customer->id,
+            'balance' => 0,
+            'currency' => 'KES',
+        ]);
         $product = LoanProduct::factory()->create(['term_length' => 2]);
         $loan = Loan::factory()->create([
             'customer_id' => $customer->id,
