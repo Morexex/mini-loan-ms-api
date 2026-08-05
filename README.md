@@ -21,14 +21,15 @@ Remote: https://github.com/Morexex/mini-loan-ms-api
 |-----|-------------|
 | [`docs/01-project-understanding.md`](./docs/01-project-understanding.md) | Milestone 0 discovery: problem, FRs/NFRs, risks, failure modes, reconciliation ranking, decisions |
 | [`docs/02-system-design.md`](./docs/02-system-design.md) | Milestone 1 architecture: modular domain, sequences, API sketch |
+| [`docs/03-erd.md`](./docs/03-erd.md) | Milestone 2 ERD: tables, money types, intents, allocations, wallet, integrity rules |
 | [`docs/adr/`](./docs/adr/) | Architecture Decision Records (interest, intents, wallet, SMS) |
-| `docs/03-erd.md` | Milestone 2 (planned) |
 
 **Read first:**
 
 1. [Why reconciliation is hardest](./docs/01-project-understanding.md#9-why-reconciliation-is-the-hardest-part)
 2. [System design](./docs/02-system-design.md)
-3. [ADR 0002 — Payment Intent identity](./docs/adr/0002-payment-intent-identity.md)
+3. [ERD](./docs/03-erd.md)
+4. [ADR 0002 — Payment Intent identity](./docs/adr/0002-payment-intent-identity.md)
 
 ## Stack (planned)
 
@@ -44,8 +45,8 @@ Remote: https://github.com/Morexex/mini-loan-ms-api
 
 - Milestone 0 — complete (discovery)
 - Milestone 1 — complete (architecture)
-- Next: Milestone 2 — database / ERD  
-- Application bootstrap: Milestone 3
+- Milestone 2 — complete (ERD)
+- Next: Milestone 3 — Laravel foundation + migrations
 
 ## Git
 
