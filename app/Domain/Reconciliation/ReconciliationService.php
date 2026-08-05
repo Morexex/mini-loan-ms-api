@@ -2,12 +2,23 @@
 
 namespace App\Domain\Reconciliation;
 
+use App\Models\PaymentIntent;
+use App\Models\User;
+
 interface ReconciliationService
 {
     /**
      * Attempt to satisfy an outstanding Payment Intent with evidence.
-     * Milestone 11: ingest + candidate linking only (no allocation).
-     * Milestone 12: full payment + installment allocation.
      */
     public function reconcile(PaymentEvidence $evidence): ReconciliationResult;
+
+    /**
+     * Operator-forced match (manual recon). May target expired intents.
+     */
+    public function reconcileToIntent(
+        PaymentEvidence $evidence,
+        PaymentIntent $intent,
+        ?User $actor = null,
+        ?string $reason = null,
+    ): ReconciliationResult;
 }

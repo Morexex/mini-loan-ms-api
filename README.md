@@ -53,7 +53,18 @@ Laravel also exposes [GET /up](http://127.0.0.1:8000/up).
 | POST | `/webhooks/daraja/b2c` | B2C result sink (raw log) |
 | POST | `/webhooks/sms-forwarder` | Header `X-Sms-Forwarder-Secret` = `SMS_FORWARDER_WEBHOOK_SECRET` |
 
-Milestone 11 links evidence to an open Payment Intent and **Milestone 12 allocates**: posts `payments`, applies installments oldest-due-first, credits wallet on overpay, completes the intent.
+### Manual reconciliation (Sanctum)
+
+| Method | Path | Notes |
+|--------|------|-------|
+| GET | `/api/v1/reconciliation/unmatched` | Unmatched webhooks + expired intents |
+| GET | `/api/v1/reconciliation/candidate-intents` | Open/expired intents (`phone`, `loan_id` filters) |
+| POST | `/api/v1/reconciliation/matches` | `{ webhook_log_id, payment_intent_uuid, reason }` → same AllocationService |
+| POST | `/api/v1/reconciliation/rejects` | `{ webhook_log_id, reason }` |
+
+Ops UI: companion `mini-loan-ms-web` (`npm run dev` on `:5173`).
+
+Evidence posts a Payment and allocates installments (Milestone 12). Manual match may target **expired** intents (late callback recovery).
 
 ### SQLite smoke test (optional)
 
@@ -97,7 +108,8 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 10 — Payment Intents + STK Push (intent-first)
 - Milestone 11 — Callback handling (STK/SMS webhooks → PaymentEvidence → ingest reconciliation)
 - Milestone 12 — Reconciliation engine (allocate installments + wallet overpay + intent TTL expiry)
-- Next: Milestone 13 — Manual reconciliation dashboard
+- Milestone 13 — Manual reconciliation API + Vue ops workspace
+- Next: Milestone 14 — Reporting
 
 ## Git
 

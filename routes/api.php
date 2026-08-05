@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\LoanController;
 use App\Http\Controllers\Api\V1\LoanProductController;
 use App\Http\Controllers\Api\V1\PaymentIntentController;
+use App\Http\Controllers\Api\V1\ReconciliationController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -32,5 +33,10 @@ Route::prefix('v1')->group(function (): void {
         Route::get('loans/{loan}/payment-intents', [PaymentIntentController::class, 'index']);
         Route::post('loans/{loan}/payment-intents', [PaymentIntentController::class, 'store']);
         Route::get('payment-intents/{paymentIntent:uuid}', [PaymentIntentController::class, 'show']);
+
+        Route::get('reconciliation/unmatched', [ReconciliationController::class, 'unmatched']);
+        Route::get('reconciliation/candidate-intents', [ReconciliationController::class, 'candidateIntents']);
+        Route::post('reconciliation/matches', [ReconciliationController::class, 'match']);
+        Route::post('reconciliation/rejects', [ReconciliationController::class, 'reject']);
     });
 });
