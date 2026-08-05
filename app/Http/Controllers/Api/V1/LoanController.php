@@ -54,6 +54,15 @@ class LoanController extends Controller
         return new LoanResource($loan);
     }
 
+    public function installments(Loan $loan): AnonymousResourceCollection
+    {
+        $this->authorize('view', $loan);
+
+        $installments = $loan->installments()->orderBy('sequence')->get();
+
+        return \App\Http\Resources\Api\V1\InstallmentResource::collection($installments);
+    }
+
     public function approve(Request $request, Loan $loan, ApproveLoanAction $action): LoanResource|JsonResponse
     {
         $this->authorize('approve', $loan);

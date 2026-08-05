@@ -60,6 +60,7 @@ php artisan migrate:fresh
 | [`docs/01-project-understanding.md`](./docs/01-project-understanding.md) | Milestone 0 discovery |
 | [`docs/02-system-design.md`](./docs/02-system-design.md) | Milestone 1 architecture |
 | [`docs/03-erd.md`](./docs/03-erd.md) | Milestone 2 ERD (migrations implement this) |
+| [`docs/04-installment-engine.md`](./docs/04-installment-engine.md) | Milestone 8 flat schedule formula + immutability |
 | [`docs/adr/`](./docs/adr/) | ADRs (incl. Sanctum cookie SPA) |
 
 ## Application layout (Approach B)
@@ -80,7 +81,8 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 5 — Customer module (normalize phone, wallet, audit)
 - Milestone 6 — Loan products (flat interest only)
 - Milestone 7 — Loan origination + approval schedule generation
-- Next: Milestone 8 — Installment engine hardening
+- Milestone 8 — Installment engine hardening + read API
+- Next: Milestone 9 — Disbursement (Daraja B2C)
 
 ## Git
 
