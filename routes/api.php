@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\LoanProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -17,5 +18,6 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/logout', [AuthController::class, 'logout']);
 
         Route::apiResource('customers', CustomerController::class)->except(['destroy']);
+        Route::apiResource('loan-products', LoanProductController::class)->except(['destroy']);
     });
 });

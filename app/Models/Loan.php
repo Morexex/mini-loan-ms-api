@@ -19,6 +19,11 @@ class Loan extends Model
         'status',
     ];
 
+    public function loanProduct(): BelongsTo
+    {
+        return $this->belongsTo(LoanProduct::class);
+    }
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);

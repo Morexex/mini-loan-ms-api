@@ -78,7 +78,8 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 3 — Laravel foundation + ERD migrations
 - Milestone 4 — Sanctum cookie SPA auth + ops seeder
 - Milestone 5 — Customer module (normalize phone, wallet, audit)
-- Next: Milestone 6 — Loan products
+- Milestone 6 — Loan products (flat interest only)
+- Next: Milestone 7 — Loan origination
 
 ## Git
 
