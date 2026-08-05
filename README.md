@@ -45,6 +45,16 @@ Health check: [GET /api/v1/health](http://127.0.0.1:8000/api/v1/health)
 
 Laravel also exposes [GET /up](http://127.0.0.1:8000/up).
 
+### Webhooks (no Sanctum)
+
+| Method | Path | Notes |
+|--------|------|-------|
+| POST | `/webhooks/daraja/stk` | STK callback → `WebhookLog` → `PaymentEvidence` → queue |
+| POST | `/webhooks/daraja/b2c` | B2C result sink (raw log) |
+| POST | `/webhooks/sms-forwarder` | Header `X-Sms-Forwarder-Secret` = `SMS_FORWARDER_WEBHOOK_SECRET` |
+
+Milestone 11 links evidence to an open Payment Intent (`matched`) but **does not allocate** installments yet (Milestone 12).
+
 ### SQLite smoke test (optional)
 
 ```bash
@@ -84,7 +94,8 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 8 — Installment engine hardening + read API
 - Milestone 9 — Disbursement via Daraja B2C (auditable + fakeable gateway)
 - Milestone 10 — Payment Intents + STK Push (intent-first)
-- Next: Milestone 11 — Callback handling
+- Milestone 11 — Callback handling (STK/SMS webhooks → PaymentEvidence → ingest reconciliation)
+- Next: Milestone 12 — Reconciliation engine (allocation)
 
 ## Git
 

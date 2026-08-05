@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Reconciliation\IngestOnlyReconciliationService;
+use App\Domain\Reconciliation\ReconciliationService;
 use App\Infrastructure\Daraja\DarajaGateway;
 use App\Infrastructure\Daraja\FakeDarajaGateway;
 use App\Infrastructure\Daraja\SandboxDarajaGateway;
@@ -21,12 +23,19 @@ class AppServiceProvider extends ServiceProvider
 
             return new SandboxDarajaGateway;
         });
+
+        // Milestone 11: ingest-only. Milestone 12 replaces this binding with full allocation.
+        $this->app->bind(ReconciliationService::class, IngestOnlyReconciliationService::class);
     }
 
     public function boot(): void
     {
         RateLimiter::for('auth', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
+        });
+
+        RateLimiter::for('webhooks', function (Request $request) {
+            return Limit::perMinute(120)->by($request->ip());
         });
     }
 }
