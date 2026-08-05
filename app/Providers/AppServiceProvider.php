@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Infrastructure\Daraja\DarajaGateway;
+use App\Infrastructure\Daraja\FakeDarajaGateway;
+use App\Infrastructure\Daraja\SandboxDarajaGateway;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -11,7 +14,13 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(DarajaGateway::class, function () {
+            if ($this->app->environment('testing') || (bool) config('daraja.fake')) {
+                return new FakeDarajaGateway;
+            }
+
+            return new SandboxDarajaGateway;
+        });
     }
 
     public function boot(): void

@@ -26,5 +26,6 @@ Route::prefix('v1')->group(function (): void {
         Route::get('loans/{loan}', [LoanController::class, 'show']);
         Route::get('loans/{loan}/installments', [LoanController::class, 'installments']);
         Route::post('loans/{loan}/approve', [LoanController::class, 'approve']);
+        Route::post('loans/{loan}/disburse', [LoanController::class, 'disburse']);
     });
 });

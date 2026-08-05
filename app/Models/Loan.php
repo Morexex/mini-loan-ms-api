@@ -52,4 +52,9 @@ class Loan extends Model
     {
         return $this->hasMany(Installment::class)->orderBy('sequence');
     }
+
+    public function disbursements(): HasMany
+    {
+        return $this->hasMany(Disbursement::class)->latest('id');
+    }
 }

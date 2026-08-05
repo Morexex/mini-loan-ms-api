@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Domain\Disbursements\Actions\DisburseLoanAction;
 use App\Domain\Loans\Actions\ApproveLoanAction;
 use App\Domain\Loans\Actions\CreateLoanApplicationAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreLoanRequest;
+use App\Http\Resources\Api\V1\InstallmentResource;
 use App\Http\Resources\Api\V1\LoanResource;
 use App\Models\Loan;
 use DomainException;
@@ -49,7 +51,7 @@ class LoanController extends Controller
     {
         $this->authorize('view', $loan);
 
-        $loan->load(['customer', 'loanProduct', 'installments']);
+        $loan->load(['customer', 'loanProduct', 'installments', 'disbursements']);
 
         return new LoanResource($loan);
     }
@@ -60,12 +62,31 @@ class LoanController extends Controller
 
         $installments = $loan->installments()->orderBy('sequence')->get();
 
-        return \App\Http\Resources\Api\V1\InstallmentResource::collection($installments);
+        return InstallmentResource::collection($installments);
     }
 
     public function approve(Request $request, Loan $loan, ApproveLoanAction $action): LoanResource|JsonResponse
     {
         $this->authorize('approve', $loan);
+
+        try {
+            $loan = $action->handle(
+                loan: $loan,
+                actor: $request->user(),
+                ip: $request->ip(),
+            );
+        } catch (DomainException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return new LoanResource($loan);
+    }
+
+    public function disburse(Request $request, Loan $loan, DisburseLoanAction $action): LoanResource|JsonResponse
+    {
+        $this->authorize('disburse', $loan);
 
         try {
             $loan = $action->handle(

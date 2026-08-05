@@ -29,6 +29,7 @@ class LoanResource extends JsonResource
             'customer' => $this->whenLoaded('customer', fn () => new CustomerResource($this->customer)),
             'loan_product' => $this->whenLoaded('loanProduct', fn () => new LoanProductResource($this->loanProduct)),
             'installments' => InstallmentResource::collection($this->whenLoaded('installments')),
+            'disbursements' => DisbursementResource::collection($this->whenLoaded('disbursements')),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

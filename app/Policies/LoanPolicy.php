@@ -26,4 +26,9 @@ class LoanPolicy
     {
         return true;
     }
+
+    public function disburse(User $user, Loan $loan): bool
+    {
+        return true;
+    }
 }

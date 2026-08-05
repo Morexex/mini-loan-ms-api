@@ -82,7 +82,8 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 6 — Loan products (flat interest only)
 - Milestone 7 — Loan origination + approval schedule generation
 - Milestone 8 — Installment engine hardening + read API
-- Next: Milestone 9 — Disbursement (Daraja B2C)
+- Milestone 9 — Disbursement via Daraja B2C (auditable + fakeable gateway)
+- Next: Milestone 10 — STK Push + Payment Intents
 
 ## Git
 

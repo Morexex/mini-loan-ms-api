@@ -12,4 +12,5 @@ return [
     'b2c_timeout_url' => env('DARAJA_B2C_TIMEOUT_URL'),
     'stk_callback_url' => env('DARAJA_STK_CALLBACK_URL'),
     'sms_forwarder_secret' => env('SMS_FORWARDER_WEBHOOK_SECRET'),
+    'fake' => (bool) env('DARAJA_FAKE', false),
 ];
