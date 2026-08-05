@@ -20,10 +20,15 @@ Remote: https://github.com/Morexex/mini-loan-ms-api
 | Doc | Description |
 |-----|-------------|
 | [`docs/01-project-understanding.md`](./docs/01-project-understanding.md) | Milestone 0 discovery: problem, FRs/NFRs, risks, failure modes, reconciliation ranking, decisions |
-| `docs/02-system-design.md` | Milestone 1 (planned) |
+| [`docs/02-system-design.md`](./docs/02-system-design.md) | Milestone 1 architecture: modular domain, sequences, API sketch |
+| [`docs/adr/`](./docs/adr/) | Architecture Decision Records (interest, intents, wallet, SMS) |
 | `docs/03-erd.md` | Milestone 2 (planned) |
 
-**Read first:** [Why reconciliation is hardest](./docs/01-project-understanding.md#9-why-reconciliation-is-the-hardest-part) and the [strategy ranking](./docs/01-project-understanding.md#11-reconciliation-strategy-ranking).
+**Read first:**
+
+1. [Why reconciliation is hardest](./docs/01-project-understanding.md#9-why-reconciliation-is-the-hardest-part)
+2. [System design](./docs/02-system-design.md)
+3. [ADR 0002 — Payment Intent identity](./docs/adr/0002-payment-intent-identity.md)
 
 ## Stack (planned)
 
@@ -33,11 +38,14 @@ Remote: https://github.com/Morexex/mini-loan-ms-api
 
 ## Framing
 
-> Payment-intent-driven transaction engine. Safaricom identifiers are metadata only — never primary join keys.
+> Modular monolith with Payment-Intent-driven reconciliation. Safaricom identifiers are metadata only — never primary join keys.
 
 ## Status
 
-Milestone 0 (requirements / discovery) is **complete**. Next: Milestone 1 — system architecture. Application bootstrap begins at Milestone 3.
+- Milestone 0 — complete (discovery)
+- Milestone 1 — complete (architecture)
+- Next: Milestone 2 — database / ERD  
+- Application bootstrap: Milestone 3
 
 ## Git
 
