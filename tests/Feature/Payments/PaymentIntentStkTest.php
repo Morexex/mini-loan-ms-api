@@ -35,14 +35,17 @@ class PaymentIntentStkTest extends TestCase
 
         $response->assertCreated()
             ->assertJsonPath('data.status', 'awaiting_callback')
-            ->assertJsonPath('data.amount', '500.00')
-            ->assertJsonPath('data.checkout_request_id', 'fake-checkout-id')
-            ->assertJsonPath('data.merchant_request_id', 'fake-merchant-id');
+            ->assertJsonPath('data.amount', '500.00');
+
+        $checkoutId = $response->json('data.checkout_request_id');
+        $this->assertIsString($checkoutId);
+        $this->assertStringStartsWith('fake-checkout-', $checkoutId);
+        $this->assertStringStartsWith('fake-merchant-', (string) $response->json('data.merchant_request_id'));
 
         $this->assertDatabaseHas('payment_intents', [
             'loan_id' => $loan->id,
             'status' => PaymentIntentStatus::AwaitingCallback->value,
-            'checkout_request_id' => 'fake-checkout-id',
+            'checkout_request_id' => $checkoutId,
         ]);
 
         $this->assertDatabaseHas('audit_logs', [

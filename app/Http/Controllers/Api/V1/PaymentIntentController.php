@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Domain\Payments\Actions\CreatePaymentIntentAction;
+use App\Domain\Payments\Actions\SimulateStkSuccessAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StorePaymentIntentRequest;
 use App\Http\Resources\Api\V1\PaymentIntentResource;
@@ -59,5 +60,40 @@ class PaymentIntentController extends Controller
         $this->authorize('view', $paymentIntent->loan);
 
         return new PaymentIntentResource($paymentIntent);
+    }
+
+    public function simulateStkSuccess(
+        Request $request,
+        Loan $loan,
+        PaymentIntent $paymentIntent,
+        SimulateStkSuccessAction $action,
+    ): JsonResponse {
+        $this->authorize('collect', $loan);
+
+        if ((int) $paymentIntent->loan_id !== (int) $loan->id) {
+            return response()->json([
+                'message' => 'Payment intent does not belong to this loan.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $intent = $action->handle(
+                intent: $paymentIntent,
+                actor: $request->user(),
+                ip: $request->ip(),
+            );
+        } catch (DomainException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return response()->json([
+            'message' => 'Simulated STK success callback ingested and allocated.',
+            'data' => (new PaymentIntentResource($intent))->resolve(),
+            'meta' => [
+                'stk_simulation' => true,
+            ],
+        ]);
     }
 }

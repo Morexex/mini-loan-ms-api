@@ -57,6 +57,18 @@ Set `DARAJA_FAKE=false` and fill **both** product credential sets in `.env` (see
 Shared: `DARAJA_CONSUMER_KEY`, `DARAJA_CONSUMER_SECRET`, `DARAJA_BASE_URL`.  
 Callbacks must be public HTTPS (e.g. `https://loan-api.begah.tech/webhooks/daraja/stk`).
 
+### Sandbox / auditor demo (STK without a personal phone)
+
+1. Seed includes customer **Sandbox Test Borrower** on `254708374149`.
+2. Originate → approve → disburse → **Collect** (creates Payment Intent + STK).
+3. While intent is `awaiting_callback`, call:
+
+```http
+POST /api/v1/loans/{loan}/payment-intents/{uuid}/simulate-stk-success
+```
+
+(or use **Simulate STK success** in the ops UI). That posts a Daraja-shaped callback through the **same** reconciliation/allocation pipeline. Enabled automatically for Fake Daraja or `sandbox.safaricom.co.ke`; force with `DARAJA_ALLOW_STK_SIMULATION=true`.
+
 ### Webhooks (no Sanctum)
 
 | Method | Path | Notes |

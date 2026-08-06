@@ -51,4 +51,14 @@ return [
     'sms_forwarder_secret' => env('SMS_FORWARDER_WEBHOOK_SECRET'),
     'fake' => (bool) env('DARAJA_FAKE', false),
     'payment_intent_ttl_minutes' => (int) env('PAYMENT_INTENT_TTL_MINUTES', 15),
+
+    /*
+    |--------------------------------------------------------------------------
+    | STK success simulation (sandbox / assessment demos)
+    |--------------------------------------------------------------------------
+    | When null/empty: enabled automatically for Fake Daraja or sandbox base URL.
+    | Set true/false to force. Ops UI posts a Daraja-shaped callback through the
+    | same reconciliation pipeline (not a bypass of allocation rules).
+    */
+    'allow_stk_simulation' => env('DARAJA_ALLOW_STK_SIMULATION'),
 ];

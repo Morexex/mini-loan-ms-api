@@ -33,6 +33,10 @@ Route::prefix('v1')->group(function (): void {
 
         Route::get('loans/{loan}/payment-intents', [PaymentIntentController::class, 'index']);
         Route::post('loans/{loan}/payment-intents', [PaymentIntentController::class, 'store']);
+        Route::post(
+            'loans/{loan}/payment-intents/{paymentIntent:uuid}/simulate-stk-success',
+            [PaymentIntentController::class, 'simulateStkSuccess'],
+        );
         Route::get('payment-intents/{paymentIntent:uuid}', [PaymentIntentController::class, 'show']);
 
         Route::get('reconciliation/unmatched', [ReconciliationController::class, 'unmatched']);

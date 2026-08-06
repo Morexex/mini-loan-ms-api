@@ -64,17 +64,20 @@ class FakeDarajaGateway implements DarajaGateway
             ];
         }
 
+        $merchantRequestId = 'fake-merchant-'.uniqid('', true);
+        $checkoutRequestId = 'fake-checkout-'.uniqid('', true);
+
         return [
             'request' => $payload,
             'response' => [
-                'MerchantRequestID' => 'fake-merchant-id',
-                'CheckoutRequestID' => 'fake-checkout-id',
+                'MerchantRequestID' => $merchantRequestId,
+                'CheckoutRequestID' => $checkoutRequestId,
                 'ResponseCode' => '0',
                 'ResponseDescription' => 'Success. Request accepted for processing',
                 'CustomerMessage' => 'Success. Request accepted for processing',
             ],
-            'merchant_request_id' => 'fake-merchant-id',
-            'checkout_request_id' => 'fake-checkout-id',
+            'merchant_request_id' => $merchantRequestId,
+            'checkout_request_id' => $checkoutRequestId,
             'response_code' => '0',
             'response_description' => 'Success. Request accepted for processing',
             'successful' => true,
