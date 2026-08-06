@@ -13,16 +13,26 @@ class SandboxDarajaGateway implements DarajaGateway
         $token = $this->accessToken();
         $url = rtrim((string) config('daraja.base_url'), '/').'/mpesa/b2c/v1/paymentrequest';
 
+        $shortcode = (string) config('daraja.b2c.shortcode');
+        $initiator = (string) config('daraja.b2c.initiator_name');
+        $credential = (string) config('daraja.b2c.security_credential');
+
+        if ($shortcode === '' || $initiator === '' || $credential === '') {
+            throw new RuntimeException(
+                'Daraja B2C is not configured. Set DARAJA_B2C_SHORTCODE, DARAJA_INITIATOR_NAME, and DARAJA_SECURITY_CREDENTIAL.',
+            );
+        }
+
         $body = [
-            'InitiatorName' => config('daraja.initiator_name'),
-            'SecurityCredential' => config('daraja.security_credential'),
+            'InitiatorName' => $initiator,
+            'SecurityCredential' => $credential,
             'CommandID' => $payload['command_id'] ?? 'BusinessPayment',
             'Amount' => $payload['amount'],
-            'PartyA' => config('daraja.shortcode'),
+            'PartyA' => $shortcode,
             'PartyB' => $payload['phone'],
             'Remarks' => $payload['remarks'] ?? 'Loan disbursement',
-            'QueueTimeOutURL' => config('daraja.b2c_timeout_url'),
-            'ResultURL' => config('daraja.b2c_result_url'),
+            'QueueTimeOutURL' => config('daraja.b2c.timeout_url') ?: config('daraja.b2c_timeout_url'),
+            'ResultURL' => config('daraja.b2c.result_url') ?: config('daraja.b2c_result_url'),
             'Occasion' => $payload['occasion'] ?? 'Disbursement',
         ];
 
@@ -55,8 +65,15 @@ class SandboxDarajaGateway implements DarajaGateway
         $token = $this->accessToken();
         $url = rtrim((string) config('daraja.base_url'), '/').'/mpesa/stkpush/v1/processrequest';
 
-        $shortcode = (string) config('daraja.shortcode');
-        $passkey = (string) config('daraja.passkey');
+        $shortcode = (string) config('daraja.stk.shortcode');
+        $passkey = (string) config('daraja.stk.passkey');
+
+        if ($shortcode === '' || $passkey === '') {
+            throw new RuntimeException(
+                'Daraja STK is not configured. Set DARAJA_STK_SHORTCODE and DARAJA_STK_PASSKEY.',
+            );
+        }
+
         $timestamp = now()->format('YmdHis');
         $password = base64_encode($shortcode.$passkey.$timestamp);
 
@@ -69,7 +86,7 @@ class SandboxDarajaGateway implements DarajaGateway
             'PartyA' => $payload['phone'],
             'PartyB' => $shortcode,
             'PhoneNumber' => $payload['phone'],
-            'CallBackURL' => config('daraja.stk_callback_url'),
+            'CallBackURL' => config('daraja.stk.callback_url') ?: config('daraja.stk_callback_url'),
             'AccountReference' => $payload['account_reference'] ?? 'LOAN',
             'TransactionDesc' => $payload['transaction_desc'] ?? 'Loan repayment',
         ];

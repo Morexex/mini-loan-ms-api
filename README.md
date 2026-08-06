@@ -45,6 +45,18 @@ Health check: [GET /api/v1/health](http://127.0.0.1:8000/api/v1/health)
 
 Laravel also exposes [GET /up](http://127.0.0.1:8000/up).
 
+### Daraja sandbox (STK + B2C together)
+
+Set `DARAJA_FAKE=false` and fill **both** product credential sets in `.env` (see `.env.example`):
+
+| Flow | Env keys | Typical sandbox |
+|------|----------|-----------------|
+| STK collect | `DARAJA_STK_SHORTCODE`, `DARAJA_STK_PASSKEY`, `DARAJA_STK_CALLBACK_URL` | Shortcode `174379` + Lipa Na M-Pesa Online passkey |
+| B2C disburse | `DARAJA_B2C_SHORTCODE`, `DARAJA_INITIATOR_NAME`, `DARAJA_SECURITY_CREDENTIAL`, result/timeout URLs | Portal B2C shortcode (e.g. `600XXX`) + initiator |
+
+Shared: `DARAJA_CONSUMER_KEY`, `DARAJA_CONSUMER_SECRET`, `DARAJA_BASE_URL`.  
+Callbacks must be public HTTPS (e.g. `https://loan-api.begah.tech/webhooks/daraja/stk`).
+
 ### Webhooks (no Sanctum)
 
 | Method | Path | Notes |
