@@ -119,6 +119,7 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 13 — Manual reconciliation API + Vue ops workspace
 - Milestone 14 — Portfolio reports (overview + installment aging)
 - Milestone 15 — Testing polish (edge cases + test matrix)
+- Ops console UI — full journey surfaces in mini-loan-ms-web (customers → loans hub → recon/reports)
 - Next: Milestone 16 — Deployment
 
 ## Git
