@@ -35,6 +35,16 @@ class AllocatingReconciliationService implements ReconciliationService
             $intent = $this->findCandidateIntent($evidence);
 
             if (! $intent) {
+                if ($this->matchesTerminalIntent($evidence)) {
+                    $this->updateLog(
+                        $this->lockLog($evidence),
+                        WebhookProcessingStatus::IgnoredDuplicate,
+                        'Evidence references an already terminal Payment Intent.',
+                    );
+
+                    return ReconciliationResult::ignoredDuplicate();
+                }
+
                 $this->updateLog(
                     $this->lockLog($evidence),
                     WebhookProcessingStatus::Unmatched,
@@ -72,7 +82,7 @@ class AllocatingReconciliationService implements ReconciliationService
                 return ReconciliationResult::failed('Payment Intent is not eligible for manual match.');
             }
 
-            return $this->applyToIntent($evidence, $intent, manual: true);
+            $result = $this->applyToIntent($evidence, $intent, manual: true);
 
             if ($result->outcome === 'accepted' && $reason) {
                 $this->recordAuditLog->handle(
@@ -238,6 +248,23 @@ class AllocatingReconciliationService implements ReconciliationService
             PaymentIntentStatus::Matched,
             PaymentIntentStatus::Expired,
         ], true);
+    }
+
+    private function matchesTerminalIntent(PaymentEvidence $evidence): bool
+    {
+        if (! $evidence->checkoutRequestId) {
+            return false;
+        }
+
+        return PaymentIntent::query()
+            ->where('checkout_request_id', $evidence->checkoutRequestId)
+            ->whereIn('status', [
+                PaymentIntentStatus::Allocated->value,
+                PaymentIntentStatus::Completed->value,
+                PaymentIntentStatus::Cancelled->value,
+                PaymentIntentStatus::Failed->value,
+            ])
+            ->exists();
     }
 
     private function findCandidateIntent(PaymentEvidence $evidence): ?PaymentIntent

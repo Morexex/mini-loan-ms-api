@@ -90,6 +90,7 @@ php artisan migrate:fresh
 | [`docs/03-erd.md`](./docs/03-erd.md) | Milestone 2 ERD (migrations implement this) |
 | [`docs/04-installment-engine.md`](./docs/04-installment-engine.md) | Milestone 8 flat schedule formula + immutability |
 | [`docs/05-reconciliation-engine.md`](./docs/05-reconciliation-engine.md) | Milestone 12 allocation + wallet overpay |
+| [`docs/06-test-matrix.md`](./docs/06-test-matrix.md) | Milestone 15 automated coverage map |
 | [`docs/adr/`](./docs/adr/) | ADRs (incl. Sanctum cookie SPA, allocation rules) |
 
 ## Application layout (Approach B)
@@ -117,7 +118,8 @@ config/daraja.php     # Sandbox + SMS webhook secret
 - Milestone 12 — Reconciliation engine (allocate installments + wallet overpay + intent TTL expiry)
 - Milestone 13 — Manual reconciliation API + Vue ops workspace
 - Milestone 14 — Portfolio reports (overview + installment aging)
-- Next: Milestone 15 — Testing polish
+- Milestone 15 — Testing polish (edge cases + test matrix)
+- Next: Milestone 16 — Deployment
 
 ## Git
 
